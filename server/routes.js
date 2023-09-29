@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const {
+    client,
     fetchPokemon
 } = require('./db')
 
@@ -41,5 +42,30 @@ router.get('/pokemons', async(req,res,next) => {
     }
   })
 
+  router.post('/pokemons', async(req, res, next)=> {
+    try{
+      const SQL =`
+        INSERT INTO pokemons(name) VALUES($1) RETURNING *
+      `;
+      const response = await client.query(SQL, [req.body.name]);
+      res.send(response.rows[0]);
+    }
+    catch(error){
+      next(error);
+    }
+  })
+
+  router.post('/trainers', async(req, res, next)=> {
+    try{
+      const SQL =`
+        INSERT INTO trainers(name) VALUES($1) RETURNING *
+      `;
+      const response = await client.query(SQL, [req.body.name]);
+      res.send(response.rows[0]);
+    }
+    catch(error){
+      next(error);
+    }
+  })
 
 module.exports = router
